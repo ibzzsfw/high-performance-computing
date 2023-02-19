@@ -86,11 +86,11 @@ int row_per_process(int size, int rank, int rows);
  *  Return: None
  */
 void vector_variant(  //
-    int size,         //
-    int rows,         //
-    int cols,         //
-    int *count,       //
-    int *displacement //
+    int size,         // in
+    int rows,         // in
+    int cols,         // in
+    int *count,       // out
+    int *displacement // out
 );
 
 /*
@@ -105,12 +105,12 @@ void vector_variant(  //
  *  Return: None
  */
 void multiply(    //
-    int colA,     //
-    int colB,     //
-    int sizeC,    //
-    int *matrixA, //
-    int *matrixB, //
-    int *matrixC  //
+    int colA,     // in
+    int colB,     // in
+    int sizeC,    // in
+    int *matrixA, // in
+    int *matrixB, // in
+    int *matrixC  // out
 );
 
 #endif
