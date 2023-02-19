@@ -6,7 +6,12 @@
 
 #define MASTER 0
 
-int main(int argc, char **argv) {
+int main(int argc, char *argv[]) {
+
+  // argc[0] is the program name
+  // arcg[1] is the matrix A file path
+  // arcg[2] is the matrix B file path
+  // argc[3] is the matrix C file path
 
   // initialize MPI
   MPI_Init(&argc, &argv);
@@ -18,11 +23,6 @@ int main(int argc, char **argv) {
   // get the rank of the process
   int rank = 0;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-
-  // argc[0] is the program name
-  // arcg[1] is the matrix A file path
-  // arcg[2] is the matrix B file path
-  // argc[3] is the matrix C file path
 
   if (argc < 3 && rank == MASTER) {
     MPI_Finalize();
@@ -124,8 +124,17 @@ int main(int argc, char **argv) {
 
   // scatter matrix A
   memory_allocate(count_scatter[rank], &subA);
-  MPI_Scatterv(matrixA, count_scatter, displacement_scatter, MPI_INT, subA,
-               count_scatter[rank], MPI_INT, MASTER, MPI_COMM_WORLD);
+  MPI_Scatterv(             //
+      matrixA,              //
+      count_scatter,        //
+      displacement_scatter, //
+      MPI_INT,              //
+      subA,                 //
+      count_scatter[rank],  //
+      MPI_INT,              //
+      MASTER,               //
+      MPI_COMM_WORLD        //
+  );
 
   // broadcast matrix B
   if (rank != MASTER) {
@@ -139,8 +148,18 @@ int main(int argc, char **argv) {
   // calculate subC
   multiply(colA, colB, count_gather[rank], subA, matrixB, subC);
 
-  MPI_Gatherv(subC, count_gather[rank], MPI_INT, matrixC, count_gather,
-              displacement_gather, MPI_INT, MASTER, MPI_COMM_WORLD);
+  // gather matrix C
+  MPI_Gatherv(             //
+      subC,                //
+      count_gather[rank],  //
+      MPI_INT,             //
+      matrixC,             //
+      count_gather,        //
+      displacement_gather, //
+      MPI_INT,             //
+      MASTER,              //
+      MPI_COMM_WORLD       //
+  );
 
   if (rank == MASTER) {
     end_time = MPI_Wtime();
