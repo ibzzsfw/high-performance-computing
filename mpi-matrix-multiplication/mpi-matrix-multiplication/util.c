@@ -13,7 +13,7 @@ m[row-1][0] m[row-1][1] ... m[row-1][col-1]
 
 FILE *open_txt(char *path, char *mode) {
 
-  // printf("path: %s\n", path);
+  printf("path: %s\n", path);
 
   FILE *fp = fopen(path, mode);
   if (fp == NULL) {
@@ -21,7 +21,7 @@ FILE *open_txt(char *path, char *mode) {
     return NULL;
   }
 
-  // printf("file opened\n");
+  printf("file opened\n");
 
   return (fp);
 }

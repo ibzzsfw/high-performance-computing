@@ -49,13 +49,9 @@ int main(int argc, char **argv) {
   double end_time = 0.0;
 
   memory_allocate(size, &count_scatter);
-  init(size, count_scatter);
   memory_allocate(size, &displacement_scatter);
-  init(size, displacement_scatter);
   memory_allocate(size, &count_gather);
-  init(size, count_gather);
   memory_allocate(size, &displacement_gather);
-  init(size, displacement_gather);
 
   // master process
   if (rank == MASTER) {
@@ -69,6 +65,7 @@ int main(int argc, char **argv) {
 
     if (fpA == NULL || fpB == NULL) {
       printf("Error opening file(s).\n");
+      MPI_Finalize();
       return (1);
     }
 
@@ -78,6 +75,7 @@ int main(int argc, char **argv) {
     // check if matrix A and B are compatible for multiplication
     if (colA != rowB) {
       printf("Matrix A and B are not compatible for multiplication.\n");
+      MPI_Finalize();
       return (1);
     }
 
@@ -86,20 +84,19 @@ int main(int argc, char **argv) {
     sizeC = rowA * colB;
 
     // calculate count and displacement
-
     vector_variant(size, rowA, colA, count_scatter, displacement_scatter);
     vector_variant(size, rowA, colB, count_gather, displacement_gather);
 
     // allocate memory for matrix A
     memory_allocate(sizeA, &matrixA);
     element(fpA, sizeA, matrixA);
-    print(rowA, colA, matrixA);
+    // print(rowA, colA, matrixA);
     fclose(fpA);
 
     // allocate memory for matrix B
     memory_allocate(sizeB, &matrixB);
     element(fpB, sizeB, matrixB);
-    print(rowB, colB, matrixB);
+    // print(rowB, colB, matrixB);
     fclose(fpB);
 
     // allocate memory for matrix C
@@ -148,7 +145,7 @@ int main(int argc, char **argv) {
   if (rank == MASTER) {
     end_time = MPI_Wtime();
     char *pathC = argv[3];
-    print(rowA, colB, matrixC);
+    // print(rowA, colB, matrixC);
     write_txt(rowA, colB, matrixC, pathC ? pathC : "output.txt");
     printf("Time: %lf milliseconds \n", (end_time - start_time) * 1000);
   }

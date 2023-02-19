@@ -7,7 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CE3231D1299EA40F007A1912 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = CE3231D0299EA40F007A1912 /* main.c */; };
+		CE2B639E29A2906E00D3728E /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = CE2B639529A2906E00D3728E /* Makefile */; };
+		CE2B639F29A2906E00D3728E /* matrix.c in Sources */ = {isa = PBXBuildFile; fileRef = CE2B639729A2906E00D3728E /* matrix.c */; };
+		CE2B63A029A2906E00D3728E /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = CE2B639829A2906E00D3728E /* util.c */; };
+		CE2B63A129A2906E00D3728E /* multiplication.c in Sources */ = {isa = PBXBuildFile; fileRef = CE2B639929A2906E00D3728E /* multiplication.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -23,8 +26,16 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		CE2B639529A2906E00D3728E /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		CE2B639629A2906E00D3728E /* matrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = matrix.h; sourceTree = "<group>"; };
+		CE2B639729A2906E00D3728E /* matrix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = matrix.c; sourceTree = "<group>"; };
+		CE2B639829A2906E00D3728E /* util.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = util.c; sourceTree = "<group>"; };
+		CE2B639929A2906E00D3728E /* multiplication.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = multiplication.c; sourceTree = "<group>"; };
+		CE2B639A29A2906E00D3728E /* util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = util.h; sourceTree = "<group>"; };
+		CE2B639B29A2906E00D3728E /* output.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = output.txt; sourceTree = "<group>"; };
+		CE2B639C29A2906E00D3728E /* temp.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = temp.sh; sourceTree = "<group>"; };
+		CE2B639D29A2906E00D3728E /* materials */ = {isa = PBXFileReference; lastKnownFileType = folder; path = materials; sourceTree = "<group>"; };
 		CE3231CD299EA40F007A1912 /* mpi-matrix-multiplication */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "mpi-matrix-multiplication"; sourceTree = BUILT_PRODUCTS_DIR; };
-		CE3231D0299EA40F007A1912 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,7 +68,15 @@
 		CE3231CF299EA40F007A1912 /* mpi-matrix-multiplication */ = {
 			isa = PBXGroup;
 			children = (
-				CE3231D0299EA40F007A1912 /* main.c */,
+				CE2B639529A2906E00D3728E /* Makefile */,
+				CE2B639D29A2906E00D3728E /* materials */,
+				CE2B639729A2906E00D3728E /* matrix.c */,
+				CE2B639629A2906E00D3728E /* matrix.h */,
+				CE2B639929A2906E00D3728E /* multiplication.c */,
+				CE2B639B29A2906E00D3728E /* output.txt */,
+				CE2B639C29A2906E00D3728E /* temp.sh */,
+				CE2B639829A2906E00D3728E /* util.c */,
+				CE2B639A29A2906E00D3728E /* util.h */,
 			);
 			path = "mpi-matrix-multiplication";
 			sourceTree = "<group>";
@@ -119,7 +138,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CE3231D1299EA40F007A1912 /* main.c in Sources */,
+				CE2B639E29A2906E00D3728E /* Makefile in Sources */,
+				CE2B63A029A2906E00D3728E /* util.c in Sources */,
+				CE2B639F29A2906E00D3728E /* matrix.c in Sources */,
+				CE2B63A129A2906E00D3728E /* multiplication.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
