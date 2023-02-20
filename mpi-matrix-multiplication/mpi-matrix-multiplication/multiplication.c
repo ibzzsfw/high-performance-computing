@@ -100,6 +100,9 @@ int main(int argc, char *argv[]) {
     memory_allocate(sizeC, &matrixC);
   }
 
+  // synchronize all processes to make sure that master process has finished
+  MPI_Barrier(MPI_COMM_WORLD);
+
   // start timer
   if (rank == MASTER) {
     start_time = MPI_Wtime();
@@ -121,16 +124,16 @@ int main(int argc, char *argv[]) {
 
   // scatter matrix A
   memory_allocate(countScatter[rank], &subA);
-  MPI_Scatterv(             //
-      matrixA,              //
+  MPI_Scatterv(            //
+      matrixA,             //
       countScatter,        //
       displacementScatter, //
-      MPI_INT,              //
-      subA,                 //
+      MPI_INT,             //
+      subA,                //
       countScatter[rank],  //
-      MPI_INT,              //
-      MASTER,               //
-      MPI_COMM_WORLD        //
+      MPI_INT,             //
+      MASTER,              //
+      MPI_COMM_WORLD       //
   );
 
   // broadcast matrix B
@@ -146,16 +149,16 @@ int main(int argc, char *argv[]) {
   multiply(colA, colB, countGather[rank], subA, matrixB, subC);
 
   // gather matrix C
-  MPI_Gatherv(             //
-      subC,                //
+  MPI_Gatherv(            //
+      subC,               //
       countGather[rank],  //
-      MPI_INT,             //
-      matrixC,             //
+      MPI_INT,            //
+      matrixC,            //
       countGather,        //
       displacementGather, //
-      MPI_INT,             //
-      MASTER,              //
-      MPI_COMM_WORLD       //
+      MPI_INT,            //
+      MASTER,             //
+      MPI_COMM_WORLD      //
   );
 
   if (rank == MASTER) {
