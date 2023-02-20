@@ -41,17 +41,17 @@ int main(int argc, char *argv[]) {
   int *matrixC = NULL;
   int *subA = NULL;
   int *subC = NULL;
-  int *count_scatter = NULL;
-  int *count_gather = NULL;
-  int *displacement_scatter = NULL;
-  int *displacement_gather = NULL;
+  int *countScatter = NULL;
+  int *countGather = NULL;
+  int *displacementScatter = NULL;
+  int *displacementGather = NULL;
   double start_time = 0.0;
   double end_time = 0.0;
 
-  memory_allocate(size, &count_scatter);
-  memory_allocate(size, &displacement_scatter);
-  memory_allocate(size, &count_gather);
-  memory_allocate(size, &displacement_gather);
+  memory_allocate(size, &countScatter);
+  memory_allocate(size, &displacementScatter);
+  memory_allocate(size, &countGather);
+  memory_allocate(size, &displacementGather);
 
   // master process
   if (rank == MASTER) {
@@ -59,7 +59,6 @@ int main(int argc, char *argv[]) {
     char *pathA = argv[1];
     char *pathB = argv[2];
 
-    // read matrix A file from path
     FILE *fpA = open_txt(pathA, "r");
     FILE *fpB = open_txt(pathB, "r");
 
@@ -84,22 +83,20 @@ int main(int argc, char *argv[]) {
     sizeC = rowA * colB;
 
     // calculate count and displacement
-    vector_variant(size, rowA, colA, count_scatter, displacement_scatter);
-    vector_variant(size, rowA, colB, count_gather, displacement_gather);
+    vector_variant(size, rowA, colA, countScatter, displacementScatter);
+    vector_variant(size, rowA, colB, countGather, displacementGather);
 
-    // allocate memory for matrix A
+    // allocate memory for matrix A, B, and C
     memory_allocate(sizeA, &matrixA);
     element(fpA, sizeA, matrixA);
     // print(rowA, colA, matrixA);
     fclose(fpA);
 
-    // allocate memory for matrix B
     memory_allocate(sizeB, &matrixB);
     element(fpB, sizeB, matrixB);
     // print(rowB, colB, matrixB);
     fclose(fpB);
 
-    // allocate memory for matrix C
     memory_allocate(sizeC, &matrixC);
   }
 
@@ -108,29 +105,29 @@ int main(int argc, char *argv[]) {
     start_time = MPI_Wtime();
   }
 
-  // broadcast matrix A dimension and size
+  // broadcast matrix A dimension
   MPI_Bcast(&rowA, 1, MPI_INT, MASTER, MPI_COMM_WORLD);
   MPI_Bcast(&colA, 1, MPI_INT, MASTER, MPI_COMM_WORLD);
 
-  // broadcast matrix B dimension and size
+  // broadcast matrix B column and size
   MPI_Bcast(&colB, 1, MPI_INT, MASTER, MPI_COMM_WORLD);
   MPI_Bcast(&sizeB, 1, MPI_INT, MASTER, MPI_COMM_WORLD);
 
   // broadcast count and displacement
-  MPI_Bcast(count_scatter, size, MPI_INT, MASTER, MPI_COMM_WORLD);
-  MPI_Bcast(displacement_scatter, size, MPI_INT, MASTER, MPI_COMM_WORLD);
-  MPI_Bcast(count_gather, size, MPI_INT, MASTER, MPI_COMM_WORLD);
-  MPI_Bcast(displacement_gather, size, MPI_INT, MASTER, MPI_COMM_WORLD);
+  MPI_Bcast(countScatter, size, MPI_INT, MASTER, MPI_COMM_WORLD);
+  MPI_Bcast(displacementScatter, size, MPI_INT, MASTER, MPI_COMM_WORLD);
+  MPI_Bcast(countGather, size, MPI_INT, MASTER, MPI_COMM_WORLD);
+  MPI_Bcast(displacementGather, size, MPI_INT, MASTER, MPI_COMM_WORLD);
 
   // scatter matrix A
-  memory_allocate(count_scatter[rank], &subA);
+  memory_allocate(countScatter[rank], &subA);
   MPI_Scatterv(             //
       matrixA,              //
-      count_scatter,        //
-      displacement_scatter, //
+      countScatter,        //
+      displacementScatter, //
       MPI_INT,              //
       subA,                 //
-      count_scatter[rank],  //
+      countScatter[rank],  //
       MPI_INT,              //
       MASTER,               //
       MPI_COMM_WORLD        //
@@ -143,19 +140,19 @@ int main(int argc, char *argv[]) {
   MPI_Bcast(matrixB, sizeB, MPI_INT, MASTER, MPI_COMM_WORLD);
 
   // allocate memory for subC
-  memory_allocate(count_gather[rank], &subC);
+  memory_allocate(countGather[rank], &subC);
 
   // calculate subC
-  multiply(colA, colB, count_gather[rank], subA, matrixB, subC);
+  multiply(colA, colB, countGather[rank], subA, matrixB, subC);
 
   // gather matrix C
   MPI_Gatherv(             //
       subC,                //
-      count_gather[rank],  //
+      countGather[rank],  //
       MPI_INT,             //
       matrixC,             //
-      count_gather,        //
-      displacement_gather, //
+      countGather,        //
+      displacementGather, //
       MPI_INT,             //
       MASTER,              //
       MPI_COMM_WORLD       //
@@ -166,7 +163,7 @@ int main(int argc, char *argv[]) {
     char *pathC = argv[3];
     // print(rowA, colB, matrixC);
     write_txt(rowA, colB, matrixC, pathC ? pathC : "output.txt");
-    printf("Time: %lf milliseconds \n", (end_time - start_time) * 1000);
+    printf("Time: %lf milliseconds\n", (end_time - start_time) * 1000);
   }
 
   // deallocate memory

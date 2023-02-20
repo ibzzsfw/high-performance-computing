@@ -1,7 +1,5 @@
 #include <stdio.h>
 
-void placeholder(char *str) { printf("%s\n", str); }
-
 /*
 file format for m[row][col]]:
 row col

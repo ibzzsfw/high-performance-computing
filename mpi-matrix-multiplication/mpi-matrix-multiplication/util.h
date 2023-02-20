@@ -4,16 +4,6 @@
 #include <stdio.h>
 
 /*
- * placeholder: Placing some description here.
- * Parameters:
- *  str: a pointer to a character array that represents the name of the
- * function.
- *
- * Return: None
- */
-void placeholder(char *str);
-
-/*
  * open_txt: This function opens a text file at the given path.
  *
  * Parameters:
