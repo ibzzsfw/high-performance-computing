@@ -98,15 +98,14 @@ int main(int argc, char *argv[]) {
     fclose(fpB);
 
     memory_allocate(sizeC, &matrixC);
+
+    // start timer, observe the time including synchronization
+    start_time = MPI_Wtime();
   }
 
   // synchronize all processes to make sure that master process has finished
+  // reading
   MPI_Barrier(MPI_COMM_WORLD);
-
-  // start timer
-  if (rank == MASTER) {
-    start_time = MPI_Wtime();
-  }
 
   // broadcast matrix A dimension
   MPI_Bcast(&rowA, 1, MPI_INT, MASTER, MPI_COMM_WORLD);
