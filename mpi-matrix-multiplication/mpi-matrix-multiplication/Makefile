@@ -1,11 +1,11 @@
-EXECUTABLES= multiplication
+EXECUTABLES= sequential
 
 all : $(EXECUTABLES)
 
-multiplication: multiplication.c matrix.c matrix.h util.c util.h
-	mpicc $(CFLAGS) -o multiplication multiplication.c matrix.c util.c
+sequential: sequential.c matrix.c matrix.h util.c util.h
+	gcc $(CFLAGS) -o sequential sequential.c matrix.c util.c
 
 clean:
-	rm -f multiplication
+	rm -f sequential
 
 # Path: Makefile

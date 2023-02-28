@@ -16,6 +16,9 @@ int main(int argc, char *argv[]) {
   // initialize MPI
   MPI_Init(&argc, &argv);
 
+  double start_time = 0.0;
+  double end_time = 0.0;
+
   // get the number of processes
   int size = 0;
   MPI_Comm_size(MPI_COMM_WORLD, &size);
@@ -23,6 +26,11 @@ int main(int argc, char *argv[]) {
   // get the rank of the process
   int rank = 0;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+  // start observing time
+  if (rank == MASTER) {
+    start_time = MPI_Wtime();
+  }
 
   if (argc < 3 && rank == MASTER) {
     MPI_Finalize();
@@ -45,8 +53,6 @@ int main(int argc, char *argv[]) {
   int *countGather = NULL;
   int *displacementScatter = NULL;
   int *displacementGather = NULL;
-  double start_time = 0.0;
-  double end_time = 0.0;
 
   memory_allocate(size, &countScatter);
   memory_allocate(size, &displacementScatter);
@@ -82,10 +88,6 @@ int main(int argc, char *argv[]) {
     sizeB = rowB * colB;
     sizeC = rowA * colB;
 
-    // calculate count and displacement
-    vector_variant(size, rowA, colA, countScatter, displacementScatter);
-    vector_variant(size, rowA, colB, countGather, displacementGather);
-
     // allocate memory for matrix A, B, and C
     memory_allocate(sizeA, &matrixA);
     element(fpA, sizeA, matrixA);
@@ -98,13 +100,8 @@ int main(int argc, char *argv[]) {
     fclose(fpB);
 
     memory_allocate(sizeC, &matrixC);
-
-    // start timer, observe the time including synchronization
-    start_time = MPI_Wtime();
   }
 
-  // synchronize all processes to make sure that master process has finished
-  // reading
   MPI_Barrier(MPI_COMM_WORLD);
 
   // broadcast matrix A dimension
@@ -115,11 +112,9 @@ int main(int argc, char *argv[]) {
   MPI_Bcast(&colB, 1, MPI_INT, MASTER, MPI_COMM_WORLD);
   MPI_Bcast(&sizeB, 1, MPI_INT, MASTER, MPI_COMM_WORLD);
 
-  // broadcast count and displacement
-  MPI_Bcast(countScatter, size, MPI_INT, MASTER, MPI_COMM_WORLD);
-  MPI_Bcast(displacementScatter, size, MPI_INT, MASTER, MPI_COMM_WORLD);
-  MPI_Bcast(countGather, size, MPI_INT, MASTER, MPI_COMM_WORLD);
-  MPI_Bcast(displacementGather, size, MPI_INT, MASTER, MPI_COMM_WORLD);
+  // calculate count and displacement
+  vector_variant(size, rowA, colA, countScatter, displacementScatter);
+  vector_variant(size, rowA, colB, countGather, displacementGather);
 
   // scatter matrix A
   memory_allocate(countScatter[rank], &subA);
@@ -161,19 +156,35 @@ int main(int argc, char *argv[]) {
   );
 
   if (rank == MASTER) {
-    end_time = MPI_Wtime();
     char *pathC = argv[3];
     // print(rowA, colB, matrixC);
     write_txt(rowA, colB, matrixC, pathC ? pathC : "output.txt");
-    printf("Time: %lf milliseconds\n", (end_time - start_time) * 1000);
   }
 
   // deallocate memory
+  rowA = 0;
+  colA = 0;
+  rowB = 0;
+  colB = 0;
+  sizeA = 0;
+  sizeB = 0;
+  sizeC = 0;
+  memory_deallocate(&countScatter);
   memory_deallocate(&matrixA);
   memory_deallocate(&matrixB);
   memory_deallocate(&matrixC);
   memory_deallocate(&subA);
   memory_deallocate(&subC);
+  memory_deallocate(&countGather);
+  memory_deallocate(&displacementScatter);
+  memory_deallocate(&displacementGather);
+
+  if (rank == MASTER) {
+    end_time = MPI_Wtime();
+    printf("Time: %lf seconds\n", end_time - start_time);
+    start_time = 0.0;
+    end_time = 0.0;
+  }
 
   // finalize MPI
   MPI_Finalize();
