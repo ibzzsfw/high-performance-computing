@@ -57,13 +57,10 @@ void MPI_Qsort(double *A, int length, MPI_Comm comm) {
   int displacement[p];
 
   int pivot = 0;
-  int l = 0;
-  int r = length - 1;
 
   MPI_Comm commS;
   MPI_Comm commL;
   int pS = 0;
-  int pL = 0;
   int color = 0;
 
   // Consider a list of size n equally divided across p processors.
@@ -77,7 +74,7 @@ void MPI_Qsort(double *A, int length, MPI_Comm comm) {
   // A pivot is selected by one of the processors and made known to all
   // processors.
   if (rank == MASTER) {
-    pivot = A[hoare_partition(A, r, l)];
+    pivot = A[hoare_partition(A, 0, length - 1)];
   }
 
   MPI_Bcast(&pivot, 1, MPI_DOUBLE, MASTER, comm);
@@ -161,8 +158,10 @@ void MPI_Qsort(double *A, int length, MPI_Comm comm) {
   memory_deallocation(&localS);
   memory_deallocation(&localL);
 
-  memory_deallocation(&S);
-  memory_deallocation(&L);
+  if (rank == MASTER) {
+    memory_deallocation(&S);
+    memory_deallocation(&L);
+  }
 
   MPI_Comm_free(&commS);
   MPI_Comm_free(&commL);
