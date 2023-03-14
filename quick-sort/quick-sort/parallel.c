@@ -22,10 +22,6 @@ void quick_sort_omp(double *A, int l, int r) {
 
 void MPI_Qsort(double *A, int length, MPI_Comm comm) {
 
-  if (length <= 1) {
-    return;
-  }
-
   int p = 0;
   MPI_Comm_size(comm, &p);
 
@@ -151,8 +147,13 @@ void MPI_Qsort(double *A, int length, MPI_Comm comm) {
   MPI_Comm_split(comm, color, rank, &commS);
   MPI_Comm_split(comm, 1 - color, rank, &commL);
 
-  MPI_Qsort(A, lengthS, commS);
-  MPI_Qsort(A + lengthS, lengthL, commL);
+  if (lengthS > 1) {
+    MPI_Qsort(A, lengthS, commS);
+  }
+
+  if (lengthL > 1) {
+    MPI_Qsort(A + lengthS, lengthL, commL);
+  }
 
   memory_deallocation(&localA);
   memory_deallocation(&localS);
