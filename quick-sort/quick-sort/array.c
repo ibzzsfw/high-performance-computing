@@ -117,7 +117,7 @@ void vector_variant(  //
     displacement[i] = i * count[i];
   }
 
-  count[p - 1] += length % p;
+  count[p - 1] += (length % p);
 }
 
 void split_array( //

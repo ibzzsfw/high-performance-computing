@@ -24,7 +24,6 @@ void memory_deallocate(int **matrix) {
 
   free(*matrix);
   *matrix = NULL;
-  
 }
 
 void dimension(FILE *fp, int *row, int *col) {
@@ -89,11 +88,7 @@ int row_per_process(int size, int rank, int rows) {
   int amount_per_process = rows / size;
   int remainder = rows % size;
 
-  if (rank < remainder) {
-    return amount_per_process + 1;
-  } else {
-    return amount_per_process;
-  }
+  return (amount_per_process + (rank < remainder ? 1 : 0));
 }
 
 void vector_variant(  //

@@ -1,14 +1,5 @@
 #include <stdio.h>
 
-/*
-file format for m[row][col]]:
-row col
-m[0][0] m[0][1] ... m[0][col-1]
-m[1][0] m[1][1] ... m[1][col-1]
-...
-m[row-1][0] m[row-1][1] ... m[row-1][col-1]
-*/
-
 FILE *open_txt(char *path, char *mode) {
 
   printf("path: %s\n", path);

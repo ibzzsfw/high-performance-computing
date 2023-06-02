@@ -117,6 +117,7 @@ int main(int argc, char *argv[]) {
   printf("Time: %lf seconds (initialize)\n", end_initialize - start_initialize);
   printf("Time: %lf seconds (multiply)\n", end_multiply - start_multiply);
   printf("Time: %lf seconds (deallocate)\n", end_deallocate - start_deallocate);
+  
   start_time = 0.0;
   end_time = 0.0;
   start_initialize = 0.0;

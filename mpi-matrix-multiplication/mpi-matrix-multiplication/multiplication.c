@@ -169,6 +169,7 @@ int main(int argc, char *argv[]) {
   sizeA = 0;
   sizeB = 0;
   sizeC = 0;
+  
   memory_deallocate(&countScatter);
   memory_deallocate(&matrixA);
   memory_deallocate(&matrixB);
